@@ -1,8 +1,9 @@
 import React from 'react';
-import Header from './Header';
+import './global.css';
+import Login from './pages/login';
 
 export default function App() {
   return (
-  <Header>MyAccess v2</Header>
+  <Login/>
   );
 }
