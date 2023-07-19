@@ -17,11 +17,37 @@ export default function Passwords() {
 
     const history = useHistory();
 
+    async function logout() {
+        localStorage.clear();
+
+        history.push('/');
+    }
+
+    async function deletePassword(id) {
+        try {
+            await api.delete(`password/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                }
+            });
+
+            setPasswords(passwords.filter(password => password.id !== id));
+        } catch(ex) {
+            alert('Erro ao deletar registro, tente novamente.')
+        }
+    }
+
     useEffect(() => {
         api.get('password/1', {
             headers: {
                 Authorization: `Bearer ${token}`,
-            }
+            },
+            // params: {
+            //     page: 1,
+            //     limit: 10,
+            //     size: 10,
+            //     direction: 'ASC',
+            // }
         }).then(response => {
             setPasswords(response.data);
         })
@@ -33,7 +59,7 @@ export default function Passwords() {
                 <img src={logoImage} alt="Java" />
                 <span>Bem-vindo, <strong>{email.toLowerCase()}</strong> !</span>
                 <Link className="button" to="passwords/new">Cadastrar nova senha</Link>
-                <button type="button">
+                <button onClick={logout} type="button">
                     <FiPower size={18} color="#E02041" />
                 </button>
             </header>
@@ -41,7 +67,7 @@ export default function Passwords() {
             <h1>Senhas cadastradas</h1>
             <ul>
                 {passwords.map(password => (
-                    <li>
+                    <li key={password.id}>
                         <strong>Descrição:</strong>
                         <p>{password.description}</p>
                         <strong>Url:</strong>
@@ -57,7 +83,7 @@ export default function Passwords() {
                         <FiEdit size={20} color="#a8a8b3" />
                         </button>
                 
-                        <button type="button">
+                        <button onClick={() => deletePassword(password.id)} type="button">
                             <FiTrash2 size={20} color="#a8a8b3" />
                         </button>
                     </li>
