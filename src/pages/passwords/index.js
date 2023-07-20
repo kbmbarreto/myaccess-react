@@ -23,6 +23,15 @@ export default function Passwords() {
         history.push('/');
     }
 
+
+    async function editPassword(id) {
+        try {
+            history.push(`/password/new/${id}`);
+        } catch(ex) {
+            alert('Erro ao editar registro, tente novamente.')
+        }
+    }
+
     async function deletePassword(id) {
         try {
             await api.delete(`password/${id}`, {
@@ -58,7 +67,7 @@ export default function Passwords() {
             <header>
                 <img src={logoImage} alt="Java" />
                 <span>Bem-vindo, <strong>{email.toLowerCase()}</strong> !</span>
-                <Link className="button" to="passwords/new">Cadastrar nova senha</Link>
+                <Link className="button" to="passwords/new/0">Cadastrar nova senha</Link>
                 <button onClick={logout} type="button">
                     <FiPower size={18} color="#E02041" />
                 </button>
@@ -79,7 +88,7 @@ export default function Passwords() {
                         <strong>Anotações:</strong>
                         <p>{password.notes}</p>
                 
-                        <button type="button">
+                        <button onClick={() => editPassword(password.id)} type="button">
                         <FiEdit size={20} color="#a8a8b3" />
                         </button>
                 
