@@ -6,23 +6,19 @@ import { FiPower, FiEdit, FiTrash2 } from "react-icons/fi";
 
 import api from "../../services/api";
 
-import './style.css';
+import './styles.css';
 
 export default function Passwords() {
 
     const [passwords, setPasswords] = useState([]);
-
     const email = localStorage.getItem('email');
     const token = localStorage.getItem('token');
-
     const history = useHistory();
 
     async function logout() {
         localStorage.clear();
-
         history.push('/');
     }
-
 
     async function editPassword(id) {
         try {
@@ -47,26 +43,26 @@ export default function Passwords() {
     }
 
     useEffect(() => {
-        api.get('password/1', {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-            // params: {
-            //     page: 1,
-            //     limit: 10,
-            //     size: 10,
-            //     direction: 'ASC',
-            // }
-        }).then(response => {
-            setPasswords(response.data);
-        })
-    })
+        async function fetchPasswords() {
+            try {
+                const response = await api.get('password/1', {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                setPasswords(response.data);
+            } catch (ex) {
+                // Tratar erros, se necessário
+            }
+        }
+        fetchPasswords();
+    }, [token]);
 
     return (
         <div className="password-container">
             <header>
                 <img src={logoImage} alt="Java" />
-                <span>Bem-vindo, <strong>{email.toLowerCase()}</strong> !</span>
+                <span>Bem-vindo, <strong>{email && email.charAt(0).toUpperCase() + email.slice(1)}</strong>!</span>
                 <Link className="button" to="passwords/new/0">Cadastrar nova senha</Link>
                 <button onClick={logout} type="button">
                     <FiPower size={18} color="#E02041" />
@@ -87,11 +83,11 @@ export default function Passwords() {
                         <p>{password.password}</p>
                         <strong>Anotações:</strong>
                         <p>{password.notes}</p>
-                
+
                         <button onClick={() => editPassword(password.id)} type="button">
-                        <FiEdit size={20} color="#a8a8b3" />
+                            <FiEdit size={20} color="#a8a8b3" />
                         </button>
-                
+
                         <button onClick={() => deletePassword(password.id)} type="button">
                             <FiTrash2 size={20} color="#a8a8b3" />
                         </button>
