@@ -3,7 +3,6 @@ import { useHistory, Link } from "react-router-dom";
 import './styles.css';
 
 import api from "../../services/api";
-
 import logo from '../../assets/java.png';
 
 export default function Login() {

@@ -45,7 +45,7 @@ export default function Passwords() {
     useEffect(() => {
         async function fetchPasswords() {
             try {
-                const response = await api.get('password/1', {
+                const response = await api.get('password/${userIdResponse}', {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
