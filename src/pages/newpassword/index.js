@@ -22,6 +22,8 @@ export default function NewPassword() {
     const email = localStorage.getItem('email');
     const token = localStorage.getItem('token');
 
+    let userIdResponse = null;
+
     const history = useHistory();
 
     useEffect(() => {
@@ -43,7 +45,7 @@ export default function NewPassword() {
             setUsername(response.data.username);
             setPassword(response.data.password);
             setNotes(response.data.notes);
-            setUser(response.data.user);
+            setUser(userIdResponse);
         } catch (ex) {
             alert('Falha ao carregar registro, tente novamente.')
             history.push('/passwords');
@@ -62,7 +64,7 @@ export default function NewPassword() {
                     }
                 });
 
-                setUser(response.data.id);
+                userIdResponse = (response.data.id);
             } catch (ex) {
                 alert('Falha ao buscar o ID do usuário.');
                 console.error('Falha ao buscar o ID do usuário: ' + ex);
@@ -137,10 +139,6 @@ export default function NewPassword() {
                     <input placeholder="Anotações"
                         value={notes}
                         onChange={e => setNotes(e.target.value)}
-                    />
-                    <input placeholder="Usuário"
-                        value={user}
-                        onChange={e => setUser(e.target.value)}
                     />
 
                     <button className="button" type="submit">{passwordId === '0' ? 'Adicionar' : 'Editar'}</button>
