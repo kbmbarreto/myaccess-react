@@ -1,5 +1,5 @@
-import React, {useState, useEffect} from "react";
-import { useHistory, Link , useParams } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useHistory, Link, useParams } from "react-router-dom";
 import { FiArrowLeft } from "react-icons/fi";
 
 import api from "../../services/api";
@@ -17,7 +17,7 @@ export default function NewPassword() {
     const [notes, setNotes] = useState('');
     const [user, setUser] = useState('');
 
-    const {passwordId} = useParams();
+    const { passwordId } = useParams();
 
     const email = localStorage.getItem('email');
     const token = localStorage.getItem('token');
@@ -25,7 +25,7 @@ export default function NewPassword() {
     const history = useHistory();
 
     useEffect(() => {
-        if(passwordId === '0') return;
+        if (passwordId === '0') return;
         else loadPassword();
     }, [passwordId])
 
@@ -44,11 +44,33 @@ export default function NewPassword() {
             setPassword(response.data.password);
             setNotes(response.data.notes);
             setUser(response.data.user);
-        } catch(ex) {
+        } catch (ex) {
             alert('Falha ao carregar registro, tente novamente.')
             history.push('/passwords');
         }
     }
+
+    useEffect(() => {
+        if (passwordId === '0') return;
+        else loadPassword();
+
+        async function fetchUserId() {
+            try {
+                const response = await api.get(`user/email/${email}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    }
+                });
+
+                setUser(response.data.id);
+            } catch (ex) {
+                alert('Falha ao buscar o ID do usuário.');
+                console.error('Falha ao buscar o ID do usuário: ' + ex);
+            }
+        }
+
+        fetchUserId();
+    }, [passwordId, email, token]);
 
     async function saveOrUpdate(e) {
         e.preventDefault();
@@ -63,7 +85,7 @@ export default function NewPassword() {
         }
 
         try {
-            if(passwordId === '0') {
+            if (passwordId === '0') {
                 await api.post('password', data, {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -78,7 +100,7 @@ export default function NewPassword() {
                 });
             }
             history.push('/passwords');
-        } catch(ex) {
+        } catch (ex) {
             alert('Falha ao adicionar novo registro, tente novamente.')
         }
     }
@@ -89,30 +111,30 @@ export default function NewPassword() {
                 <section className="form">
                     <img src={logo} alt="Logo" />
                     <h1>{passwordId === '0' ? 'Adicionar novo' : 'Editar'} registro</h1>
-                    <p>Adicione as informações e clique em {passwordId === '0' ? "'Adicionar'" : "'Editar'"}.</p>
+                    <p>Adicione as informações e clique em '{passwordId === '0' ? "Adicionar" : "Editar"}'.</p>
                     <Link className="back-link" to="/passwords">
                         <FiArrowLeft size={16} color="#E02041" />
                         Voltar para a tela inicial
                     </Link>
                 </section>
                 <form onSubmit={saveOrUpdate}>
-                    <input placeholder="Descrição" 
+                    <input placeholder="Descrição"
                         value={description}
                         onChange={e => setDescription(e.target.value)}
                     />
-                    <input placeholder="Url" 
+                    <input placeholder="Url"
                         value={url}
                         onChange={e => setUrl(e.target.value)}
                     />
-                    <input placeholder="Usuário" 
+                    <input placeholder="Usuário"
                         value={username}
                         onChange={e => setUsername(e.target.value)}
                     />
-                    <input placeholder="Senha" 
+                    <input placeholder="Senha"
                         value={password}
                         onChange={e => setPassword(e.target.value)}
                     />
-                    <input placeholder="Anotações" 
+                    <input placeholder="Anotações"
                         value={notes}
                         onChange={e => setNotes(e.target.value)}
                     />
